@@ -809,7 +809,7 @@ def help():
     stdout.write("             "+Fore.LIGHTCYAN_EX            +"╠═════════════════════════════════════════════════════╣\n")
     stdout.write("             "+Fore.LIGHTCYAN_EX            +"║ \x1b[38;2;255;20;147m• "+Fore.LIGHTWHITE_EX+"THANK    "+Fore.LIGHTCYAN_EX+"|"+Fore.LIGHTWHITE_EX+" Thanks for using IDEKS.                "+Fore.LIGHTCYAN_EX+"║\n")
     stdout.write("             "+Fore.LIGHTCYAN_EX            +"║ \x1b[38;2;255;20;147m• "+Fore.LIGHTWHITE_EX+"YOU♥     "+Fore.LIGHTCYAN_EX+"|"+Fore.LIGHTWHITE_EX+" IDEKS PROJECT                          "+Fore.LIGHTCYAN_EX+"║\n")
-    stdout.write("             "+Fore.LIGHTCYAN_EX            +"║ \x1b[38;2;255;20;147m• "+Fore.LIGHTWHITE_EX+"github   "+Fore.LIGHTCYAN_EX+"|"+Fore.LIGHTWHITE_EX+" https://discord.gg/6JmewHjy            "+Fore.LIGHTCYAN_EX+"║\n")
+    stdout.write("             "+Fore.LIGHTCYAN_EX            +"║ \x1b[38;2;255;20;147m• "+Fore.LIGHTWHITE_EX+"github"+Fore.LIGHTCYAN_EX+"|"+Fore.LIGHTWHITE_EX+" https://github.com/UNLOGGED1/ideks-Ddoser "+Fore.LIGHTCYAN_EX+"║\n")
     stdout.write("             "+Fore.LIGHTCYAN_EX            +"╚═════════════════════════════════════════════════════╝\n")
     stdout.write("\n")
 ##############################################################################################
