@@ -809,7 +809,7 @@ def help():
     stdout.write("             "+Fore.LIGHTCYAN_EX            +"╠═════════════════════════════════════════════════════╣\n")
     stdout.write("             "+Fore.LIGHTCYAN_EX            +"║ \x1b[38;2;255;20;147m• "+Fore.LIGHTWHITE_EX+"THANK    "+Fore.LIGHTCYAN_EX+"|"+Fore.LIGHTWHITE_EX+" Thanks for using IDEKS.                "+Fore.LIGHTCYAN_EX+"║\n")
     stdout.write("             "+Fore.LIGHTCYAN_EX            +"║ \x1b[38;2;255;20;147m• "+Fore.LIGHTWHITE_EX+"YOU♥     "+Fore.LIGHTCYAN_EX+"|"+Fore.LIGHTWHITE_EX+" IDEKS PROJECT                          "+Fore.LIGHTCYAN_EX+"║\n")
-    stdout.write("             "+Fore.LIGHTCYAN_EX            +"║ \x1b[38;2;255;20;147m• "+Fore.LIGHTWHITE_EX+"github"+Fore.LIGHTCYAN_EX+"|"+Fore.LIGHTWHITE_EX+" https://github.com/UNLOGGED1/ideks-Ddoser "+Fore.LIGHTCYAN_EX+"║\n")
+    stdout.write("             "+Fore.LIGHTCYAN_EX            +"║ \x1b[38;2;255;20;147m• "+Fore.LIGHTWHITE_EX+"github"+Fore.LIGHTCYAN_EX+"|"+Fore.LIGHTWHITE_EX+" https://github.com/UNLOGGED1/ideks-Ddoser" +Fore.LIGHTCYAN_EX+"║\n")
     stdout.write("             "+Fore.LIGHTCYAN_EX            +"╚═════════════════════════════════════════════════════╝\n")
     stdout.write("\n")
 ##############################################################################################
@@ -879,16 +879,17 @@ def tools():
 ##############################################################################################
 def title():
     stdout.write("               "+Fore.LIGHTWHITE_EX   +"Welcome to IDEKS Ddoser dm on discord for any problems             \n")
-    stdout.write("                          "+Fore.LIGHTCYAN_EX   +"▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄       \n")
-    stdout.write("                          "+Fore.LIGHTCYAN_EX   +"█▄░▄██░▄▄▀██░▄▄▄██░█▀▄██░▄▄▄░       \n")
-    stdout.write("                          "+Fore.LIGHTCYAN_EX   +"██░███░██░██░▄▄▄██░▄▀███▄▄▄▀▀       \n")
-    stdout.write("                          "+Fore.LIGHTCYAN_EX   +"█▀░▀██░▀▀░██░▀▀▀██░██░██░▀▀▀░       \n")
-    stdout.write("                          "+Fore.LIGHTCYAN_EX   +"▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀       \n")
+    stdout.write("                          "+Fore.LIGHTCYAN_EX   +"    ╔╗    ╔╗               \n")
+    stdout.write("                          "+Fore.LIGHTCYAN_EX   +"    ║║    ║║               \n")
+    stdout.write("                          "+Fore.LIGHTCYAN_EX   +"╔╗╔═╝║╔══╗║║╔╗╔══╗         \n")
+    stdout.write("                          "+Fore.LIGHTCYAN_EX   +"╠╣║╔╗║║╔╗║║╚╝╝║══╣         \n")
+    stdout.write("                          "+Fore.LIGHTCYAN_EX   +"║║║╚╝║║║═╣║╔╗╗╠══║         \n")
+    stdout.write("                          "+Fore.LIGHTCYAN_EX   +"╚╝╚══╝╚══╝╚╝╚╝╚══╝         \n")
     stdout.write("             "+Fore.LIGHTCYAN_EX            +"        ══╦═════════════════════════════════╦══\n")
     stdout.write("             "+Fore.LIGHTCYAN_EX+"╔═════════╩═════════════════════════════════╩═════════╗\n")
     stdout.write("             "+Fore.LIGHTCYAN_EX+"║ "+Fore.LIGHTWHITE_EX   +"      Welcome To The Main Screen Of IDEKS Ddos  "+Fore.LIGHTCYAN_EX  +"    ║\n")
     stdout.write("             "+Fore.LIGHTCYAN_EX+"║ "+Fore.LIGHTWHITE_EX   +"      type [help] to see the Commands    "+Fore.LIGHTCYAN_EX +"           ║\n")
-    stdout.write("             "+Fore.LIGHTCYAN_EX+"║ "+Fore.LIGHTWHITE_EX   +"      Contact Dev - https://discord.gg/4XvAVFW8 "+Fore.LIGHTCYAN_EX +"    ║\n")
+    stdout.write("             "+Fore.LIGHTCYAN_EX+"║ "+Fore.LIGHTWHITE_EX   +"      Contact Dev - https://discord.gg/ay7Ap6st "+Fore.LIGHTCYAN_EX +"    ║\n")
     stdout.write("             "+Fore.LIGHTCYAN_EX+"║ "+Fore.LIGHTWHITE_EX   +"      Helpers - karma#3214/idek "+Fore.LIGHTCYAN_EX +"                    ║\n")
     stdout.write("             "+Fore.LIGHTCYAN_EX+"╚═════════════════════════════════════════════════════╝\n")
     stdout.write("\n")
@@ -1213,3 +1214,4 @@ if __name__ == '__main__':
         timer.join()
     else:
         stdout.write("No method found.\nMethod: cfb, pxcfb, cfreq, cfsoc, pxsky, sky, http2, pxhttp2, get, post, head, soc, pxraw, pxsoc\n")
+        staticmethod("")
