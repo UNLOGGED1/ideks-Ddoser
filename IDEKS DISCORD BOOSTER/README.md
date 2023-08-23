@@ -1,5 +1,5 @@
 # Discord Member Booster 🪐
-The best member booster for discord, super easy to use and effective! What are you waiting for to increase your servers? Here I leave you a video preview and the functions it has.
+easy free member booster and its open source pls dont skid i will cry
 
 ## 📹 Preview
 
