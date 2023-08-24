@@ -1,0 +1,618 @@
+import discord
+from discord.ext import commands
+import random
+import asyncio
+import string
+import requests
+import re
+import time
+
+bot_token = 'bot token'
+bot_owner_ids = ['bot owner id']
+
+intents = discord.Intents.default()
+intents.message_content = True
+
+bot = commands.Bot(command_prefix='$', intents=intents)
+
+user_keys = {}
+
+try:
+  with open('keys.txt', 'r') as file:
+    lines = file.readlines()
+    for line in lines:
+      parts = line.strip().split('=')
+      if len(parts) == 2:
+        user_id, key = parts
+
+  with open('owner.txt', 'r') as file:
+    lines = file.readlines()
+    for line in lines:
+      parts = line.strip().split('=')
+      if len(parts) == 2:
+        user_id, key = parts
+        user_keys[int(user_id)] = key
+except FileNotFoundError:
+  pass
+
+
+@bot.command()
+async def genkey(ctx, target_user_id: int):
+  if str(ctx.author.id
+         ) in bot_owner_ids or ctx.author.guild_permissions.administrator:
+    key = ''.join(
+        random.choice(string.ascii_letters + string.digits) for _ in range(16))
+    user_keys[target_user_id] = key
+    with open('keys.txt', 'a') as file:
+      file.write(f"{target_user_id}={key}\n")
+    await ctx.send(f"Key generated for user with ID {target_user_id}: `{key}`")
+  else:
+    await ctx.send("Only the bot owner and staff members can generate keys.")
+
+
+@bot.event
+async def on_ready():
+  print(f'Logged in as {bot.user.name}')
+
+
+@bot.event
+async def on_message(message):
+  if message.author == bot.user:
+    return
+  await bot.process_commands(message)
+
+
+def has_valid_key(user_id, key):
+  return user_id in user_keys and user_keys[user_id] == key
+
+
+@bot.command()
+async def build(ctx, key: str):
+  if has_valid_key(ctx.author.id, key):
+    await ctx.send("You're all set to build")
+
+    await ctx.send(
+        "How do you want to build your embed message? Please provide a title:")
+
+    def check(message):
+      return message.author == ctx.author and message.channel == ctx.channel
+
+    try:
+      title_msg = await bot.wait_for('message', check=check, timeout=60)
+      title = title_msg.content
+
+      await ctx.send("Got it! Now, provide a description for your embed:")
+      description_msg = await bot.wait_for('message', check=check, timeout=60)
+      description = description_msg.content
+
+      embed = discord.Embed(title=title,
+                            description=description,
+                            color=discord.Color.blue())
+      await ctx.send("Here's your custom embed message:")
+      await ctx.send(embed=embed)
+
+    except asyncio.TimeoutError:
+      await ctx.send("Time's up! You took too long to respond.")
+
+  else:
+    await ctx.send("Invalid key.")
+
+
+@bot.command()
+async def genip(ctx, key: str):
+  if has_valid_key(ctx.author.id, key):
+    fake_ip = f"{random.randint(1, 255)}.{random.randint(1, 255)}.{random.randint(1, 255)}.{random.randint(1, 255)}"
+    await ctx.send(f"Here's your IP address: `{fake_ip}`")
+  else:
+    await ctx.send("Invalid key.")
+
+
+@bot.command()
+async def getserverinfo(ctx, key: str):
+  if has_valid_key(ctx.author.id, key):
+    guild = ctx.guild
+    server_info = f"Server Name: {guild.name}\n"
+    server_info += f"Server ID: {guild.id}\n"
+    server_info += f"Owner: {guild.owner}\n"
+    server_info += f"Member Count: {guild.member_count}\n"
+
+    latency = bot.latency * 1000
+    region = "Unknown"
+
+    if latency < 100:
+      region = "US-West"
+    elif latency < 200:
+      region = "US-East"
+
+    server_info += f"Estimated Region: {region}\n"
+    server_info += f"Latency: {latency:.2f} ms\n"
+    server_info += f"Created At: {guild.created_at}\n"
+
+    await ctx.send(server_info)
+  else:
+    await ctx.send("Invalid key.")
+    
+
+@bot.command()
+async def iplookup(ctx, ip: str, key: str):
+  if has_valid_key(ctx.author.id, key):
+    await ctx.send(f"IP Lookup Result for {ip}: ...")
+  else:
+    await ctx.send("Invalid key.")
+
+
+@bot.command()
+async def Geturip(ctx, key: str):
+  if has_valid_key(ctx.author.id, key):
+    ip = requests.get('https://api64.ipify.org?format=json').json()['ip']
+    await ctx.author.send(f"Your IP address is: {ip}")
+  else:
+    await ctx.send("Invalid key.")
+
+
+@bot.command()
+async def gennitro(ctx, key: str):
+  if has_valid_key(ctx.author.id, key):
+    num_codes = 25
+    nitro_codes = [
+        ''.join(
+            random.choice(string.ascii_uppercase + string.digits)
+            for _ in range(16)) for _ in range(num_codes)
+    ]
+    user = ctx.author
+    for code in nitro_codes:
+      await user.send(f"Here's a Nitro gift for you: `discord.gift/{code}`")
+
+    await ctx.send(f"Sent {num_codes} Nitro codes to your DMs")
+  else:
+    await ctx.send("Invalid key.")
+
+@bot.command()
+async def blacklist(ctx, target_user_id: int):
+  if str(ctx.author.id) == bot_owner_ids:
+    if target_user_id in user_keys:
+      del user_keys[target_user_id]
+      with open('keys.txt', 'w') as file:
+        for user_id, key in user_keys.items():
+          file.write(f"{user_id}={key}\n")
+      await ctx.send(
+          f"User with ID {target_user_id} has been blacklisted and their key has been removed."
+      )
+    else:
+      await ctx.send(f"User with ID {target_user_id} is not in the key list.")
+  else:
+    await ctx.send("Only the bot owner can blacklist users.")
+
+
+@bot.command()
+async def unblacklist(ctx, target_user_id: int):
+  if str(ctx.author.id) == bot_owner_ids:
+    if target_user_id in user_keys:
+      await ctx.send(
+          f"User with ID {target_user_id} is already in the key list.")
+    else:
+      key = ''.join(
+          random.choice(
+              'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
+          for _ in range(16))
+      user_keys[target_user_id] = key
+      with open('keys.txt', 'a') as file:
+        file.write(f"{target_user_id}={key}\n")
+      await ctx.send(
+          f"User with ID {target_user_id} has been unblacklisted and their key has been restored."
+      )
+  else:
+    await ctx.send("Only the bot owner can unblacklist users.")
+
+
+@bot.command()
+async def ban(ctx, target_user_id: int):
+  if str(ctx.author.id) == bot_owner_ids:
+    user = await bot.fetch_user(target_user_id)
+    await ctx.guild.ban(user)
+    await ctx.send(f"User with ID {target_user_id} has been banned.")
+  else:
+    await ctx.send("Only the bot owner can ban users.")
+
+
+@bot.command()
+async def unban(ctx, target_user_id: int):
+  if str(ctx.author.id) == bot_owner_ids:
+    user = await bot.fetch_user(target_user_id)
+    if user:
+      await ctx.guild.unban(user)
+      await ctx.send(f"User with ID {target_user_id} has been unbanned.")
+    else:
+      await ctx.send("User not found.")
+  else:
+    await ctx.send("Only the bot owner can unban users.")
+
+
+@bot.command()
+async def giverole(ctx, target_user_id: int, role_name: str):
+  if str(ctx.author.id) == bot_owner_ids:
+    guild = ctx.guild
+    try:
+      target_user = await guild.fetch_member(target_user_id)
+    except discord.NotFound:
+      await ctx.send(f"User with ID {target_user_id} not found.")
+      return
+
+    role = discord.utils.get(guild.roles, name=role_name)
+    if role is None:
+      await ctx.send(f"Role with name {role_name} not found.")
+      return
+
+    await target_user.add_roles(role)
+    await ctx.send(
+        f"Role `{role_name}` has been given to user with ID {target_user_id}.")
+  else:
+    await ctx.send("Only the owner can give roles.")
+
+
+user_warnings = {}
+
+
+@bot.command()
+async def antinuke(ctx):
+  if str(ctx.author.id) == bot_owner_ids:
+    global antinuke_enabled
+    antinuke_enabled = True
+    await ctx.send("Antinuke system has been started.")
+  elif antinuke_enabled:
+    if len(ctx.message.mentions) > 10:
+      await ctx.send("Mass mention detected. Nuke prevented.")
+      return
+
+    if len(ctx.message.role_mentions) > 5:
+      await ctx.send("Role mention detected. Nuke prevented.")
+      return
+
+    if ctx.author.id in user_warnings:
+      user_warnings[ctx.author.id] += 1
+      if user_warnings[ctx.author.id] >= 3:
+        await ctx.guild.ban(ctx.author, reason="Nuke prevention: Spamming")
+        await ctx.send(f"{ctx.author.mention} has been banned for spamming.")
+        user_warnings[ctx.author.id] = 0
+      else:
+        await ctx.send(
+            f"{ctx.author.mention}, warning for spamming ({user_warnings[ctx.author.id]}/3)."
+        )
+    else:
+      user_warnings[ctx.author.id] = 1
+
+    if isinstance(ctx.channel,
+                  discord.TextChannel) and ctx.author != ctx.guild.owner:
+      async for entry in ctx.guild.audit_logs(
+          action=discord.AuditLogAction.ban):
+        if entry.target == ctx.author and (
+            ctx.message.created_at - entry.created_at).total_seconds() < 10:
+          await ctx.guild.ban(ctx.author, reason="Nuke prevention: Rapid bans")
+          await ctx.send("Rapid bans detected. Nuke prevented.")
+          return
+
+      async for entry in ctx.guild.audit_logs(
+          action=discord.AuditLogAction.bulk_delete):
+        if entry.user == ctx.author and (
+            ctx.message.created_at - entry.created_at).total_seconds() < 10:
+          await ctx.send("Rapid message deletion detected. Nuke prevented.")
+          return
+
+    await ctx.send("No nuke attempts detected. Command executed normally.")
+  else:
+    await ctx.send("Antinuke system is currently disabled.")
+
+
+@bot.command()
+async def offantinuke(ctx):
+  if str(ctx.author.id) == bot_owner_ids:
+    if ctx.author.guild_permissions.administrator:
+      global antinuke_enabled
+      antinuke_enabled = False
+      await ctx.send("Antinuke system has been turned off.")
+    else:
+      await ctx.send(
+          "You need to have administrator permissions to turn off the antinuke system."
+      )
+  else:
+    await ctx.send("Only the bot owner can turn off the antinuke system.")
+
+
+@bot.command()
+async def clean(ctx):
+  if str(ctx.author.id
+         ) in bot_owner_ids or ctx.author.guild_permissions.administrator:
+    deleted = await ctx.channel.purge(limit=25)
+    await ctx.send(f"Deleted {len(deleted)} messages.")
+  else:
+    await ctx.send("Only the bot owner and staff members can use this command.")
+
+def generate_fake_info():
+  fake_user = f"User{random.randint(1000, 9999)}"
+  fake_password = ''.join(
+      random.choice(string.ascii_letters + string.digits) for _ in range(12))
+  return fake_user, fake_password
+
+
+@bot.command()
+async def gen(ctx, key: str):
+  if has_valid_key(ctx.author.id, key):
+    user = ctx.author
+    await user.send(
+        "Hey there! What account are you in the mood to generate?\nType `roblox`, `steam`, or `valorant`."
+    )
+
+
+@bot.event
+async def on_message(message):
+  if message.author.bot:
+    return
+
+  content = message.content.lower()
+
+  if content == 'roblox' or content == 'steam' or content == 'valorant':
+    fake_user, fake_password = generate_fake_info()
+    await message.channel.send(
+        f"heres your acc {content.capitalize()} account is ready:\nUsername: {fake_user}\nPassword: {fake_password}\have fun with the account"
+    )
+
+  await bot.process_commands(message)
+
+
+@bot.command()
+async def genpacc(ctx, key: str):
+  if has_valid_key(ctx.author.id, key):
+    username = "GG/INJECT"
+    starter_pokemon = "Charizard"
+    badges_earned = 8
+
+    profile = f"🔥 Legendary Pokemon Trainer Account 🌟\nUsername: {username}\nStarter Pokemon: {starter_pokemon}\nBadges Earned: {badges_earned}"
+
+    await ctx.send(profile)
+  else:
+    await ctx.send(
+        "Invalid key! You need a valid key to generate the Pokemon account.")
+
+
+@bot.command()
+async def genfort(ctx, key: str):
+  if has_valid_key(ctx.author.id, key):
+    username = generate_username()
+    skins = 50
+    password = generate_password()
+    email = generate_email(username)
+
+    profile = f" Fortnite Account Generated! \nUsername: {username}\nSkins: {skins}\nPassword: {password}\nEmail: {email}"
+
+    await ctx.author.send(profile)
+    await ctx.send("Account details sent to your DMs! Enjoy your Fortnite acc")
+  else:
+    await ctx.send(
+        "Invalid key! You need a valid key to generate the Fortnite account.")
+
+
+def generate_password(length=12):
+  characters = string.ascii_letters + string.digits + string.punctuation
+  password = ''.join(random.choice(characters) for _ in range(length))
+  return password
+
+
+def generate_email(username):
+  domains = ["gmail.com", "yahoo.com", "outlook.com", "hotmail.com"]
+  random_domain = random.choice(domains)
+  email = f"{username}@{random_domain}"
+  return email
+
+
+def generate_username():
+  adjectives = [
+      "Cool", "Epic", "Mighty", "Swift", "Ninja", "poopy", "niggerbitch"
+  ]
+  animals = ["Lion", "Tiger", "Panda", "Hawk", "Dragon"]
+  random_adjective = random.choice(adjectives)
+  random_animal = random.choice(animals)
+  username = f"{random_adjective}{random_animal}"
+  return username
+
+
+@bot.command()
+async def genkeystaff(ctx, target_user_id: int = None):
+  if target_user_id is None:
+    key = ''.join(
+        random.choice(string.ascii_letters + string.digits) for _ in range(16))
+    user_keys[ctx.author.id] = key
+    with open('keys.txt', 'a') as file:
+      file.write(f"{ctx.author.id}={key}\n")
+    await ctx.send(f"Staff key generated for {ctx.author.mention}: `{key}`")
+  elif str(ctx.author.id
+           ) in bot_owner_ids or ctx.author.guild_permissions.administrator:
+    key = ''.join(
+        random.choice(string.ascii_letters + string.digits) for _ in range(16))
+    user_keys[target_user_id] = key
+    with open('keys.txt', 'a') as file:
+      file.write(f"{target_user_id}={key}\n")
+    await ctx.send(f"Key generated for user with ID {target_user_id}: `{key}`")
+  else:
+    await ctx.send("Only the bot owner and staff members can generate keys.")
+
+
+@bot.command()
+async def price(ctx):
+    embed = discord.Embed(title="Prices", description="Here are the pricing options:", color=0x00ff00)
+    embed.add_field(name="1 week", value="5 USD Cashapp or Paypal", inline=False)
+    embed.add_field(name="1 Month", value="10 USD Cashapp or Paypal", inline=False)
+    embed.add_field(name="1 year", value="15 USD Cashapp or Paypal", inline=False)
+    embed.add_field(name="Life time", value="20 USD Cashapp or Paypal", inline=False)
+    embed.set_footer(text="Paypal option coming soon!")
+
+    await ctx.send(embed=embed)
+
+
+@bot.command()
+async def perks(ctx):
+    embed = discord.Embed(title="Perks", description="Here are the available perks:", color=0x00ff00)
+    embed.add_field(name="$build <key>", value="Creates an embed message of your choice", inline=False)
+    embed.add_field(name="$genip <key>", value="Generates an IP address", inline=False)
+    embed.add_field(name="$getserverinfo <key>", value="Gets info about the server", inline=False)
+    embed.add_field(name="$genkey", value="Generates a new key (bot owner only)", inline=False)
+    embed.add_field(name="$iplookup <ip> <key>", value="Looks up an IP address", inline=False)
+    embed.add_field(name="$start <key>", value="Gets your IP address", inline=False)
+    embed.add_field(name="$gennitro <key>", value="Generates a Nitro gift (key required)", inline=False)
+    embed.add_field(name="$genroblox <key>", value="Generates a Roblox account (key required)", inline=False)
+    embed.add_field(name="$blacklist (owner only)", value="Blacklists people from using bot commands", inline=False)
+    embed.add_field(name="$unblacklist (owner only)", value="Unblacklists people from using bot commands", inline=False)
+    embed.add_field(name="$ban (owner only)", value="Bans people from my server", inline=False)
+    embed.add_field(name="$unban (owner only)", value="Unbans people from my server", inline=False)
+    embed.add_field(name="$rolegive (owner only)", value="Gives roles to people", inline=False)
+    embed.add_field(name="$Antinuke (owner only)", value="Keeps your server safe", inline=False)
+    embed.add_field(name="$offAntinuke (owner only)", value="Turns off server protection", inline=False)
+    embed.add_field(name="$Clean (owner only)", value="Cleans your chats", inline=False)
+    embed.add_field(name="$math", value="Evaluate a mathematical expression", inline=False)
+    embed.set_footer(text="Some commands are restricted to bot owners!")
+
+    await ctx.send(embed=embed)
+
+
+@bot.command()
+async def status(ctx):
+  embed = discord.Embed(title="Bot Status", color=0x00ff00)
+  embed.add_field(name="LOGGER BOT", value="✅", inline=False)
+  embed.add_field(name="IDEKS BOT", value="✅", inline=False)
+  embed.add_field(name="IDEKS TICKET BOT", value="✅", inline=False)
+  #✅
+  await ctx.send(embed=embed)
+
+
+
+@bot.command()
+async def math(ctx, *, expression):
+    cleaned_expression = re.sub(r'[^0-9+\-*/.\s]', '', expression)
+    cleaned_expression = cleaned_expression.replace('e', '*')
+
+    try:
+        result = eval(cleaned_expression)
+        await ctx.send(f"The result of the expression `{expression}` is: {result}")
+    except Exception as e:
+        await ctx.send(f"An error occurred while evaluating the expression: {e}")
+
+
+@bot.command()
+async def free(ctx):
+    embed = discord.Embed(title="Free Commands", description="Here are the available free commands:", color=0x00ff00)
+    embed.add_field(name="$math", value="Evaluate a mathematical expression", inline=False)
+
+    await ctx.send(embed=embed)
+
+@bot.command()
+async def sell(ctx):
+    embed = discord.Embed(title="sells", color=0x00ff00)
+    embed.add_field(name="5USD", value="Nitro gen working 2023", inline=False)
+    embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/1144076112251605034/1144080561778983082/image.png")
+    await ctx.send(embed=embed)
+
+@bot.command()
+async def sell1(ctx):
+    embed = discord.Embed(title="sells", color=0x00ff00)
+    embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/1144076112251605034/1144080641000996954/image.png")
+    embed.add_field(name="5USD", value="Nitro gen working 2023", inline=False)
+    await ctx.send(embed=embed)
+
+@bot.command()
+async def sell2(ctx):
+    embed = discord.Embed(title="sells", color=0x00ff00)
+    embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/1144076112251605034/1144082682310049953/image.png")
+    embed.add_field(name="5USD", value="Ddoser boot any website off line for 1hr to a long time", inline=False)
+    await ctx.send(embed=embed)
+
+@bot.command()
+async def rules(ctx):
+  embed = discord.Embed(title="Server Rules", color=0x00ff00)
+  embed.set_thumbnail(url="DONT HAVE ONE OK")
+  embed.description = (
+    "gg/inject | Rules\n\n"
+    "General rules\n"
+    "- No advertising\n"
+    "- No spamming\n"
+    "- No swear words\n"
+    "- Be respectful to other people in this server\n"
+    "- Follow discords community guidelines [ https://discordapp.com/guidelines ]\n"
+    "- No NSFW\n"
+    "- No gore\n"
+    "- Do NOT leak other peoples info such as ips and passwords\n"
+    "- No using selfbots or other softwares in this server\n"
+    "- No logging people in this server\n\n"
+    "Ticket rules\n"
+    "- Troll tickets are NOT allowed\n"
+    "Rules apply to everyone even if youre an owner/mod,"
+    "if you break one of these rules the owners/idek will have perm to ban/mute you"
+  )
+
+  await ctx.send(embed=embed)
+
+
+  def remove_expired_keys():
+    current_time = time.time()
+
+    with open('keys.txt', 'r') as file:
+      lines = file.readlines()
+
+    with open('keys.txt', 'w') as file:
+      for line in lines:
+        key, label = line.strip().split(':')
+        if label == "week":
+          timestamp = float(key.split('=')[1])
+          if current_time - timestamp <= 604800:
+            file.write(f"{key}:week\n")
+          else:
+            print(f"Expired key removed: {key}")
+        elif label == "month":
+          timestamp = float(key.split('=')[1])
+          if current_time - timestamp <= 2592000:
+            file.write(f"{key}:month\n")
+          else:
+            print(f"Expired key removed: {key}")
+
+@bot.command()
+async def genmonthkey(ctx):
+        new_key = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(16))
+        timestamp = time.time()
+
+        with open('keys.txt', 'a') as file:
+            file.write(f"{new_key}={timestamp}:month\n")
+
+        await ctx.send(f"A new monthly key has been generated: `{new_key}`")
+
+@bot.command()
+async def genweekkey(ctx):
+        new_key = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(16))
+
+        with open('keys.txt', 'a') as file:
+            file.write(f"{new_key}:week\n")
+
+        await ctx.send(f"A new weekly key has been generated: `{new_key}`")
+
+@bot.command()
+async def members(ctx):
+    try:
+        if isinstance(ctx.channel, discord.TextChannel):
+            server = ctx.guild
+            member_count = server.member_count
+            member_ids = [member.id for member in server.members]
+
+            member_ids_str = '\n'.join(str(id) for id in member_ids)
+
+            with open('member_ids.txt', 'w') as file:
+                file.write(member_ids_str)
+
+            channel = discord.utils.get(server.channels, name='transscript')
+            if channel:
+                await channel.send(f"Total members: {member_count}\nMember IDs have been saved in a text file.", file=discord.File('member_ids.txt'))
+            else:
+                await ctx.send("The specified channel does not exist.")
+
+        else:
+            await ctx.send("This command can only be used in a text channel.")
+    except Exception as e:
+        await ctx.send(f"An error occurred: {e}")
+
+bot.run(bot_token)
